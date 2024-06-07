@@ -21,7 +21,7 @@ class StockPredictor:
         dates = [0]
         prices = []
         
-        data = yf.download(self.stockName, period= "3mo")
+        data = yf.download(self.stockName, period= "1mo")
         for index, rows in data.iterrows():
             
             prices.append(rows.array[0])
@@ -29,7 +29,7 @@ class StockPredictor:
         dates = range(0,len(prices))
         return [prices, dates]
     
-    def PredictPrices(self, x):
+    def PredictPrices(self):
         data = self.GetData()
         prices = data[0]; dates = data[1]
         dates = np.reshape(dates, (len(dates),1))
@@ -52,7 +52,8 @@ class StockPredictor:
         plt.legend()
         plt.show()
         
-        return svrRbf.predict(x)[0], svrLin.predict(x)[0], svrPoly.predict(x)[0]
+        return
 
-result =  StockPredictor("AAPL")
-result.PredictPrices(9)
+result =  StockPredictor("BTC-USD")
+result.PredictPrices()
+
