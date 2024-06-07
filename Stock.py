@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.svm import SVR
 import yfinance as yf
 import pandas as pd
-
-
+from keras.models import Sequential
+from keras.layers import Dense
 
 
 
