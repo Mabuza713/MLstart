@@ -49,7 +49,10 @@ class BrainTumorTraining:
     
     def BuildingModel(self):
         model = Sequential()
-        model.add(Conv2D(32, (3,3), input_shape= (self.size,self.size, 3)))
+        model.add(Conv2D(32, (3,3), input_shape= (self.size,self.size, 3))) # Conv2 (convultion layer) is used to extract features from image (convultion matrix of size 3x3)
+        model.add(Activation("relu")) # Layer that activates input data
+        model.add(MaxPooling2D) # Layer Scales data by chosing a maximal value of sub-matrix
+        
         
         
         
