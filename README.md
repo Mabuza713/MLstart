@@ -1,1 +1,1 @@
-NOTHING IN THIS REPO IS INVESTMENT ADVICE!!!!
+This repository contains all of my machine Learning projects.
