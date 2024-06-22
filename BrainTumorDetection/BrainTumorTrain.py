@@ -10,6 +10,7 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 import shutil
+from keras.utils import to_categorical
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
 
@@ -48,8 +49,11 @@ class BrainTumorTraining:
         xTrain = normalize(xTrain, axis= 1)
         xTest = normalize(xTest, axis= 1)
         
+        yTrain = to_categorical(yTrain, num_classes= 2)
+        yTest = to_categorical(yTest, num_classes= 2)
+        
         return xTrain, xTest, yTrain, yTest
-    def BuildingModel(self,epochsAmount):
+    def BuildingModelBinary(self,epochsAmount):
         xTrain, xTest, yTrain, yTest = self.ResizeAndConvertData()
         model = Sequential()
         
@@ -78,8 +82,35 @@ class BrainTumorTraining:
         model.save("BrainTumor" + str(epochsAmount) + ".h5")
         shutil.move("BrainTumor" + str(epochsAmount) + ".h5", "BrainTumorDetection")
                 
+    def BuildingModelCategorical(self,epochsAmount):
+        xTrain, xTest, yTrain, yTest = self.ResizeAndConvertData()
+        model = Sequential()
         
+        model.add(Conv2D(32, (3,3), input_shape= (self.size,self.size, 3)))
+        model.add(Activation("relu")) 
+        model.add(MaxPooling2D(pool_size= (2,2)))
+        
+        model.add(Conv2D(32, (3,3), kernel_initializer="he_uniform"))
+        model.add(Activation("relu"))
+        model.add(MaxPooling2D(pool_size= (2,2))) 
+        
+        model.add(Conv2D(64, (3,3), kernel_initializer="he_uniform")) 
+        model.add(Activation("relu"))
+        model.add(MaxPooling2D(pool_size= (2,2))) 
+        
+        model.add(Flatten())
+        model.add(Dense(64))
+        model.add(Activation("relu"))
+        model.add(Dropout(0.5)) 
+        
+        model.add(Dense(2)) 
+        model.add(Activation("softmax"))
+        
+        model.compile(loss = "binary_crossentropy", optimizer= "adam", metrics= ["accuracy"]) #accuracy metric will help us measure the performance of our model
+        model.fit(xTrain, yTrain, batch_size=16, verbose=True, epochs = epochsAmount, validation_data=(xTest, yTest), shuffle=False) # Fitting data into our model
+        model.save("BrainTumorCategorical" + str(epochsAmount) + ".h5")
+        shutil.move("BrainTumorCategorical" + str(epochsAmount) + ".h5", "BrainTumorDetection")
 
 test = BrainTumorTraining(noTumorDir = "BrainTumorDetection/no", yesTumorDir= "BrainTumorDetection/yes", size = 64)
 test.ResizeAndConvertData()
-test.BuildingModel(epochsAmount= 10)
+test.BuildingModelCategorical(epochsAmount= 10)
